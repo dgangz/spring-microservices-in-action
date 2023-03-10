@@ -1,0 +1,14 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  creationTimestamp: null
+  name: eks-new-backend
+spec:
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              io.kompose.network/eks-new-backend: "true"
+  podSelector:
+    matchLabels:
+      io.kompose.network/eks-new-backend: "true"

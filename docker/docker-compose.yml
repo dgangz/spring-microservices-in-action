@@ -8,16 +8,16 @@ services:
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
-      POSTGRES_DB:       "ostock_dev"
+      POSTGRES_DB: "ostock-aws"
     volumes:
-        - ./init.sql:/docker-entrypoint-initdb.d/1-init.sql
-        - ./data.sql:/docker-entrypoint-initdb.d/2-data.sql
+      - ./init.sql:/docker-entrypoint-initdb.d/1-init.sql
+      - ./data.sql:/docker-entrypoint-initdb.d/2-data.sql
     networks:
       backend:
         aliases:
           - "database"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -25,7 +25,7 @@ services:
     image: ostock/configserver:chapter12
     container_name: configServer
     ports:
-       - "8071:8071"
+      - "8071:8071"
     environment:
       ENCRYPT_KEY: "fje83Ki8403Iod87dne7Yjsl3THueh48jfuO9j4U2hf64Lo"
     networks:
@@ -41,7 +41,7 @@ services:
       database:
         condition: service_healthy
       configserver:
-        condition: service_started  
+        condition: service_started
     networks:
       backend:
         aliases:
@@ -111,8 +111,8 @@ services:
     environment:
       PROFILE: "dev"
       CONFIGSERVER_URI: "http://configserver:8071"
-      CONFIGSERVER_PORT:   "8071"
-      ENCRYPT_KEY:       "IMSYMMETRIC"
+      CONFIGSERVER_PORT: "8071"
+      ENCRYPT_KEY: "IMSYMMETRIC"
     depends_on:
       database:
         condition: service_healthy
@@ -130,9 +130,9 @@ services:
     environment:
       PROFILE: "dev"
       CONFIGSERVER_URI: "http://configserver:8071"
-      CONFIGSERVER_PORT:   "8071"
+      CONFIGSERVER_PORT: "8071"
       DATABASESERVER_PORT: "5432"
-      ENCRYPT_KEY:       "IMSYMMETRIC"
+      ENCRYPT_KEY: "IMSYMMETRIC"
     depends_on:
       database:
         condition: service_healthy
@@ -152,9 +152,9 @@ services:
     environment:
       PROFILE: "dev"
       CONFIGSERVER_URI: "http://configserver:8071"
-      CONFIGSERVER_PORT:   "8071"
+      CONFIGSERVER_PORT: "8071"
       DATABASESERVER_PORT: "5432"
-      ENCRYPT_KEY:       "IMSYMMETRIC"
+      ENCRYPT_KEY: "IMSYMMETRIC"
     depends_on:
       database:
         condition: service_healthy
@@ -211,12 +211,12 @@ services:
       backend:
         aliases:
           - "logstash"
-  zipkin: 
-    image: openzipkin/zipkin 
+  zipkin:
+    image: openzipkin/zipkin
     container_name: zipkin
-    depends_on: 
+    depends_on:
       - elasticsearch
-    environment: 
+    environment:
       - STORAGE_TYPE=elasticsearch
       - "ES_HOSTS=elasticsearch:9300"
     ports:

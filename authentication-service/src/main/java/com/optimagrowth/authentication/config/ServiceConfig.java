@@ -12,7 +12,6 @@ public class ServiceConfig {
   @Value("${signing.key}")
   private String jwtSigningKey="";
 
-
   public String getJwtSigningKey() {
     return jwtSigningKey;
   }

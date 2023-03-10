@@ -17,62 +17,62 @@ import brave.Tracer;
 
 @Service
 public class OrganizationService {
-	
-	private static final Logger logger = LoggerFactory.getLogger(OrganizationService.class);
-	
+
+    private static final Logger logger = LoggerFactory.getLogger(OrganizationService.class);
+
     @Autowired
     private OrganizationRepository repository;
-    
+
     @Autowired
     SimpleSourceBean simpleSourceBean;
-    
+
     @Autowired
-	Tracer tracer;
+    Tracer tracer;
 
     public Organization findById(String organizationId) {
-    	Optional<Organization> opt = null;
-    	ScopedSpan newSpan = tracer.startScopedSpan("getOrgDBCall");
-    	try {
-    	opt = repository.findById(organizationId);
-    	simpleSourceBean.publishOrganizationChange("GET", organizationId);
-    	if (!opt.isPresent()) {
-    		String message = String.format("Unable to find an organization with the Organization id %s", organizationId);
-			logger.error(message);
-			throw new IllegalArgumentException(message);	
-		}
-    	logger.debug("Retrieving Organization Info: " + opt.get().toString());
-    	}finally {
-    		newSpan.tag("peer.service", "postgres");
-			newSpan.annotate("Client received");
-			newSpan.finish();
-    	}
-    	return opt.get();
-    }	
+        Optional<Organization> opt;
+        ScopedSpan newSpan = tracer.startScopedSpan("getOrgDBCall");
+        try {
+            opt = repository.findById(organizationId);
+            simpleSourceBean.publishOrganizationChange("GET", organizationId);
+            if (!opt.isPresent()) {
+                String message = String.format("Unable to find an organization with the Organization id %s", organizationId);
+                logger.error(message);
+                throw new IllegalArgumentException(message);
+            }
+            logger.debug("Retrieving Organization Info: " + opt.get());
+        } finally {
+            newSpan.tag("peer.service", "postgres");
+            newSpan.annotate("Client received");
+            newSpan.finish();
+        }
+        return opt.get();
+    }
 
-    public Organization create(Organization organization){
-    	organization.setId( UUID.randomUUID().toString());
+    public Organization create(Organization organization) {
+        organization.setId(UUID.randomUUID().toString());
         organization = repository.save(organization);
         simpleSourceBean.publishOrganizationChange("SAVE", organization.getId());
         return organization;
 
     }
 
-    public void update(Organization organization){
-    	repository.save(organization);
+    public void update(Organization organization) {
+        repository.save(organization);
         simpleSourceBean.publishOrganizationChange("UPDATE", organization.getId());
     }
 
-    public void delete(String organizationId){
-    	repository.deleteById(organizationId);
-    	simpleSourceBean.publishOrganizationChange("DELETE", organizationId);
+    public void delete(String organizationId) {
+        repository.deleteById(organizationId);
+        simpleSourceBean.publishOrganizationChange("DELETE", organizationId);
     }
-    
+
     @SuppressWarnings("unused")
-	private void sleep(){
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			logger.error(e.getMessage());
-		}
-	}
+    private void sleep() {
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            logger.error(e.getMessage());
+        }
+    }
 }

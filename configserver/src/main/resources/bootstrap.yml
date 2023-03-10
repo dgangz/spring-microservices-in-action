@@ -10,8 +10,10 @@ spring:
         #native:
          #search-locations: classpath:/config
         git:
-           uri: https://github.com/ihuaylupo/config.git
-    
+          uri: https://github.com/dgangz/spmia-config.git
+          skipSslValidation: true
+          default-label: main
+
 server:
   port: 8071
   
